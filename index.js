@@ -1,4 +1,4 @@
-jQuery(document).ready(function($){
+
     var n = n || {};
 n.appendMessage = n => {
     const t = new CustomEvent("bpac_send", {
@@ -1620,4 +1620,4 @@ export class IDocument {
     }
 }
 export const IsExtensionInstalled = () => document.body.classList.contains("bpac-extension-installed") ? !0 : !1
-  });
+
