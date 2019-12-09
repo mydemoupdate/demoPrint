@@ -1,0 +1,106 @@
+﻿<!--
+'*************************************************************************
+'
+'		b-PAC 3.2 Component Sample for Extensions (JS_NamePlate.html)
+'
+'		(C)Copyright Brother Industries, Ltd. 2019
+'
+'*************************************************************************/
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>b-PAC 3.2 Javascript Sample for Extensions</title>
+	
+</head>
+<body style="color:White;background-color:#8080c0">
+<form id = "myForm" action = "">
+	<h2 style="text-align:center">Simple Name Badge Example</h2>
+	<hr />
+    <p>
+			Template :
+    <select name="cmbTemplate" id="cmbTemplate" style="width: 320px; height: 22px">
+    <option value="NamePlate1.lbx" selected="selected">NamePlate Design 1</option>
+    <option value="NamePlate2.lbx">NamePlate Design 2</option>
+    </select>
+    </p>
+
+	<p>
+			Name :
+    <input id="txtName" type="text" style="width: 320px" value="John Smith"/>
+    </p>
+
+	<p>
+			Company :
+    <input id="txtCompany" type="text" style="width: 320px" value="LBI Corp." />
+    </p>
+
+    <input id="btnPrint" type="button" value="   Print   " onclick="DoPrint('')"/>
+	<input id="btnPreview" type="button" value="   Preview   " onclick="DoPrint('Preview.bmp')"/>
+    <hr />
+	<br />
+	Tape Width :
+	<input id="txtWidth" style="size:15;"/>
+    </form>
+    <p>
+    	<img id='previewArea'></img>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script type="module">
+    import * as bpac from '/bpac.js';
+	const DATA_FOLDER = "C:\\Program Files\\Brother bPAC3 SDK\\Templates\\";
+	//const DATA_FOLDER = "http://localhost/";
+    //------------------------------------------------------------------------------
+    //   Function name   :   DoPrint
+    //   Description     :   Print, Preview Module
+    //------------------------------------------------------------------------------
+	window.DoPrint = async function DoPrint(strExport)
+    {
+		if(bpac.IsExtensionInstalled() == false)
+		{
+			const agent = window.navigator.userAgent.toLowerCase();
+			const ischrome = (agent.indexOf('chrome') !== -1) && (agent.indexOf('edge') === -1)  && (agent.indexOf('opr') === -1)
+			if(ischrome)
+				window.open('https://chrome.google.com/webstore/detail/ilpghlfadkjifilabejhhijpfphfcfhb', '_blank');
+			return;
+		}
+
+		try{
+			const theForm = document.getElementById("myForm");
+			const nItem = theForm.cmbTemplate.selectedIndex;
+			const strPath = DATA_FOLDER + theForm.cmbTemplate.options[nItem].value;
+			const objDoc = bpac.IDocument;
+			const ret = await objDoc.Open(strPath);
+			if(ret == true)
+			{
+				const objCompany = await objDoc.GetObject("objCompany");
+				objCompany.Text = theForm.txtCompany.value;
+				const objName = await objDoc.GetObject("objName");
+				objName.Text = theForm.txtName.value;
+				theForm.txtWidth.value = await objDoc.Width;
+
+				if(strExport == "")
+				{
+					objDoc.StartPrint("", 0);
+					objDoc.PrintOut(1, 0);
+					objDoc.EndPrint();
+				}
+				else
+				{
+					const image = await objDoc.GetImageData(4, 0, 100);
+					const img = document.getElementById("previewArea");
+					img.src = image;
+				}
+
+				objDoc.Close();
+			}
+		}
+		catch(e)
+		{
+            console.log(e);
+		}
+	}   
+	</script>  
+</html>
