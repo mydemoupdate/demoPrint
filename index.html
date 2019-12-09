@@ -9,7 +9,36 @@
 	<script src="index.js"></script>
 </head>
 <body style="color:White;background-color:#8080c0">
+<form id = "myForm" action = "">
+	<h2 style="text-align:center">Simple Name Badge Example</h2>
+	<hr />
+    <p>
+			Template :
+    <select name="cmbTemplate" id="cmbTemplate" style="width: 320px; height: 22px">
+    <option value="NamePlate1.lbx" selected="selected">NamePlate Design 1</option>
+    <option value="NamePlate2.lbx">NamePlate Design 2</option>
+    </select>
+    </p>
 
+	<p>
+			Name :
+    <input id="txtName" type="text" style="width: 320px" value="John Smith"/>
+    </p>
+
+	<p>
+			Company :
+    <input id="txtCompany" type="text" style="width: 320px" value="LBI Corp." />
+    </p>
+
+    <input id="btnPrint" type="button" value="   Print   " onclick="DoPrint('')"/>
+	<input id="btnPreview" type="button" value="   Preview   " onclick="DoPrint('Preview.bmp')"/>
+    <hr />
+	<br />
+	Tape Width :
+	<input id="txtWidth" style="size:15;"/>
+    </form>
+    <p>
+    	<img id='previewArea'></img>
 </body>
 
 
