@@ -1,4 +1,4 @@
-
+'use strict';
     var n = n || {};
 n.appendMessage = n => {
     const t = new CustomEvent("bpac_send", {
