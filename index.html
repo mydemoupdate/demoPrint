@@ -41,5 +41,59 @@
     	<img id='previewArea'></img>
 </body>
 
+<script type="module">
+    import * as bpac from '/bpac.js';
+	const DATA_FOLDER = "C:\\Program Files\\Brother bPAC3 SDK\\Templates\\";
+	//const DATA_FOLDER = "http://localhost/";
+    //------------------------------------------------------------------------------
+    //   Function name   :   DoPrint
+    //   Description     :   Print, Preview Module
+    //------------------------------------------------------------------------------
+	window.DoPrint = async function DoPrint(strExport)
+    {
+		if(bpac.IsExtensionInstalled() == false)
+		{
+			const agent = window.navigator.userAgent.toLowerCase();
+			const ischrome = (agent.indexOf('chrome') !== -1) && (agent.indexOf('edge') === -1)  && (agent.indexOf('opr') === -1)
+			if(ischrome)
+				window.open('https://chrome.google.com/webstore/detail/ilpghlfadkjifilabejhhijpfphfcfhb', '_blank');
+			return;
+		}
 
+		try{
+			const theForm = document.getElementById("myForm");
+			const nItem = theForm.cmbTemplate.selectedIndex;
+			const strPath = DATA_FOLDER + theForm.cmbTemplate.options[nItem].value;
+			const objDoc = bpac.IDocument;
+			const ret = await objDoc.Open(strPath);
+			if(ret == true)
+			{
+				const objCompany = await objDoc.GetObject("objCompany");
+				objCompany.Text = theForm.txtCompany.value;
+				const objName = await objDoc.GetObject("objName");
+				objName.Text = theForm.txtName.value;
+				theForm.txtWidth.value = await objDoc.Width;
+
+				if(strExport == "")
+				{
+					objDoc.StartPrint("", 0);
+					objDoc.PrintOut(1, 0);
+					objDoc.EndPrint();
+				}
+				else
+				{
+					const image = await objDoc.GetImageData(4, 0, 100);
+					const img = document.getElementById("previewArea");
+					img.src = image;
+				}
+
+				objDoc.Close();
+			}
+		}
+		catch(e)
+		{
+            console.log(e);
+		}
+	}   
+	</script>  
 </html>
